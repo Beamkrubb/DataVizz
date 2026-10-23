@@ -11,8 +11,8 @@ _Last updated: 2026-10-23_
 | 2 | Data loader + dataset status registry | ✅ Done | `feat: data loader` |
 | 3 | Metrics & statistics engine + unit tests | ✅ Done | `feat: metrics and statistics engine` |
 | 4 | App shell + Global Controls Bar (double-counting rule) | ✅ Done | `feat: app shell and global controls` |
-| 5 | Tab 1 — Overview & Spatial | ⏳ Pending | |
-| 6 | Tab 2 — Climate & Seasonality | ⏳ Pending | |
+| 5 | Tab 1 — Overview & Spatial | ✅ Done | `feat: tab 1 overview` |
+| 6 | Tab 2 — Climate & Seasonality | ✅ Done | `feat: tab 2 climate` |
 | 7 | Tab 3 — Production Drivers | ⏳ Pending | |
 | 8 | Tab 4 — Farm Economics & Calculator | ⏳ Pending | |
 | 9 | Verification (tests + smoke run of every tab) | ⏳ Pending | |
@@ -36,6 +36,22 @@ Legend: ✅ Done · 🔄 In progress · ⏳ Pending · 🚧 Blocked
    should happen locally after `pip install -r requirements.txt`.
 
 ## 📝 Change log
+
+### Step 5 — Tab 1: Overview & Spatial Analysis (2026-10-23)
+- **KPI cards** (one row per selected crop): planted area, harvested area + harvest ratio, total
+  production, and yield, each with YoY vs. the previous year. Values come from the scope's own
+  `geo_level` row.
+- **Choropleth map**: switch between production (ตัน) and yield (กก./ไร่) on a sequential blue
+  scale, joined on `properties.pro_th`. Hover shows province, production, area and yield.
+  **Clicking a province filters the whole dashboard.** Province view shows its region with the
+  selected province outlined. Provinces missing from the GeoJSON are listed. Without the GeoJSON,
+  the map falls back to a top-15 ranking bar.
+- **Scale vs. Efficiency quadrant**: X = planted or harvested area (log toggle), Y = yield, with
+  national-mean reference lines. Q1–Q4 are coded by both colour and marker shape; Q4 target
+  provinces are listed, with a table view of all points.
+- **13-year trend** for the scope (production / area / yield) with the selected year marked.
+- Smoke run with synthetic scratch fixtures (not shipped): 3 charts render in all 5 filter
+  scenarios, including a province with missing years.
 
 ### Step 4 — App shell & Global Controls Bar (2026-10-23)
 - `src/filters.py`: `FilterState` (crops, year, level, region, province). `scope_rows()` enforces the
