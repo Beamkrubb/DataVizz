@@ -9,8 +9,8 @@ _Last updated: 2026-10-23_
 | 0 | Project README (from spec + data dictionary) | ✅ Done | `docs: add project README` |
 | 1 | Scaffold: requirements, `.gitignore`, `src/config.py`, status file | ✅ Done | `chore: scaffold project` |
 | 2 | Data loader + dataset status registry | ✅ Done | `feat: data loader` |
-| 3 | Metrics & statistics engine + unit tests | ⏳ Pending | |
-| 4 | App shell + Global Controls Bar (double-counting rule) | ⏳ Pending | |
+| 3 | Metrics & statistics engine + unit tests | ✅ Done | `feat: metrics and statistics engine` |
+| 4 | App shell + Global Controls Bar (double-counting rule) | ✅ Done | `feat: app shell and global controls` |
 | 5 | Tab 1 — Overview & Spatial | ⏳ Pending | |
 | 6 | Tab 2 — Climate & Seasonality | ⏳ Pending | |
 | 7 | Tab 3 — Production Drivers | ⏳ Pending | |
@@ -36,6 +36,35 @@ Legend: ✅ Done · 🔄 In progress · ⏳ Pending · 🚧 Blocked
    should happen locally after `pip install -r requirements.txt`.
 
 ## 📝 Change log
+
+### Step 4 — App shell & Global Controls Bar (2026-10-23)
+- `src/filters.py`: `FilterState` (crops, year, level, region, province). `scope_rows()` enforces the
+  **Double-Counting Prevention Rule**: country and region views read their own `geo_level` rows and
+  never sum provinces. Also adds province-level selectors, national reference means for the quadrant,
+  and an unweighted spatial mean for province-only climate data.
+- `app.py`: top-of-page Global Controls Bar (crop multiselect, year slider, cascading
+  country → region → province), cached `load_all()`, 4 tabs, and a sidebar dataset-status panel with
+  row counts, GISTDA API-key status and a reload button. Map clicks can queue a province
+  (`pending_province`) that the controls apply on rerun.
+- `src/ui.py`: validated colour palette (fixed categorical order, sequential blue, status colours,
+  ordered S1→N soil ramp), number formatting, Plotly styling, an honest "data not loaded" notice and a
+  table-view expander for accessibility.
+- `.streamlit/config.toml`: theme pinned to light so chart ink and palette stay validated.
+- `tests/test_filters.py`: 6 tests (country/region rows are **not** province sums) → 31/31 pass.
+- Smoke run with stubbed Streamlit/Plotly and no data: all 5 filter scenarios render without error.
+- **Design decision:** Tab 2's "dual-axis rain + temperature" chart will be built as two stacked panels
+  sharing the month axis. Two y-scales on one plot is a well-known misreading risk, and stacked panels
+  show the same information.
+
+### Step 3 — Metrics & statistics engine (2026-10-23)
+- `src/metrics.py`: YoY growth, yield, harvest ratio, 2×2 quadrant classifier (national-mean
+  reference lines), dry-spell check (Jun–Jul total vs. mean of all *other* complete years, flag at
+  > 30 % deficit), irrigation ratio, soil mismatch (S3 + N > 30 %), price summary (max/min/mean,
+  ±1σ volatility band, CV), profit margin, break-even calculator (TC_rai, TC_total, TR, net profit,
+  Y_BE, P_BE), and `match_product` to link crop names across OAE sources.
+- `src/stats.py`: Pearson r + p, Spearman ρ + p, OLS (β0, β1, R², SE) via SciPy, with guards for
+  n < 3 and constant variables; plain-language strength labels.
+- `tests/test_metrics_stats.py`: 15 tests, worked by hand from the spec formulas → **25/25 tests pass**.
 
 ### Step 2 — Data loader (2026-10-23)
 - `src/data_loader.py`: one loader per dataset (11 total) that normalises headers through alias
