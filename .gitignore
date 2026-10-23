@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.streamlit/secrets.toml
+.env
+# Raw source data is downloaded from the owning agencies, not versioned
+data/raw/*
+!data/raw/.gitkeep
+data/*.xlsx
+data/*.geojson
+*.xlsx
